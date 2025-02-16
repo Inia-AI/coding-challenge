@@ -1,0 +1,19 @@
+{
+    "dotnet.unitTests.runSettingsPath": ".runsettings",
+
+    "git.autofetch": true,
+    "git.confirmSync": true,
+    "git.inputValidationSubjectLength": 120,
+    "git.suggestSmartCommit": false,
+
+    "files.associations": {
+        "*.csproj": "xml",
+        "*.query": "json",
+        "*.sequence": "json",
+        "*.workflow": "json",
+    },
+    "files.defaultLanguage": "",
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+}

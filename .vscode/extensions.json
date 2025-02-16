@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "editorconfig.editorconfig",
+        "ms-dotnettools.vscodeintellicode-csharp",
+        "esbenp.prettier-vscode",
+        "fullstackspider.visual-nuget",
+        "tomoki1207.pdf",
+        "ms-dotnettools.vscode-dotnet-runtime",
+    ]
+}
