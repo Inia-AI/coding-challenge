@@ -12,16 +12,20 @@ namespace Acme.Services.Tests;
 public class DocumentProcessingServiceTests
 {
     private readonly DocumentProcessingService _documentProcessing;
+    private readonly WorkflowService _workflowService;
     private readonly BinaryContent _imageSample;
     private readonly BinaryContent _pdfSample;
     private readonly BinaryContent _csvSample;
     private readonly BinaryContent _excelSample;
 
+    // WorkflowService tests should be separate from DocumentProcessingService tests, however for the sake of
+    // keeping the refactor scope limited to the service layer, workflow tests will be done here
     public DocumentProcessingServiceTests(
         ITestOutputHelper testOutputHelper)
     {
-        _documentProcessing = new DocumentProcessingService(
-            TestsLogger.CreateLogger<DocumentProcessingService>(testOutputHelper));
+        _documentProcessing = new DocumentProcessingService(TestsLogger.CreateLogger<DocumentProcessingService>(testOutputHelper));
+        _workflowService = new WorkflowService(TestsLogger.CreateLogger<WorkflowService>(testOutputHelper));
+
         _imageSample = new(
             BinaryData.FromBytes(System.IO.File.ReadAllBytes("TestResources/ManagerQs1.png")),
             MediaType.ImagePng);
@@ -115,13 +119,16 @@ public class DocumentProcessingServiceTests
             new DocumentInfo() { Document = document3 },
             new DocumentInfo() { Document = document4 },
         ];
+
+        // In order to properly test LoadContextToWorkflowAsync this shouldn't be here
+        // Resulting documents after processing should be mocked here instead
         await _documentProcessing.ProcessDocumentsAsync(
             [.. documents.Select(d => d.Document)],
             shouldGenerateOverviews: false,
             shouldDetectSectionTitles: false);
 
         // Act
-        await _documentProcessing.LoadContextToWorkflowAsync(
+        await _workflowService.LoadContextToWorkflowAsync(
             documents,
             workflow,
             onDocumentProcessed: async document => await Task.Run(() => onDocProcessedIndicator += "success|"));

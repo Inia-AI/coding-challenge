@@ -1,5 +1,6 @@
 using Acme.Common;
 using Acme.Entities.Documents;
+using Acme.Entities.Workflows.Enums;
 
 namespace Acme.Entities.Workflows;
 
@@ -39,4 +40,15 @@ public class Workflow : JsonSerializable<Workflow>
         return topLevelWorkflow;
     }
 
+    // Moved over from DocumentProcessingService to here as I think it makes more sense as a part of Workflow class
+    public bool WorkflowUsesTopics()
+    {
+        // Gets blocks through GetAllBlocks instead of explicitly checking parent plus children workflows
+        return GetAllBlocks().Any(b => b.RagSettings.Any(r => r.Type is RagTypes.UseTopics));
+    }
+
+    public bool WorkflowUsesToc()
+    {
+        return GetAllBlocks().Any(b => b.RagSettings.Any(r => r.Type is RagTypes.UseAutoDetectedTableOfContents));
+    }
 }
