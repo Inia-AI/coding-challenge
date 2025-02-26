@@ -99,5 +99,10 @@ public class WorkflowServiceTests
 
         Assert.Empty(block4.Documents);
         Assert.Null(workflow.AllPagesTopics);
+
+        Assert.All(document1.Pages, page => Assert.Contains(page, workflow.AllPages));
+        Assert.All(document2.Pages, page => Assert.Contains(page, workflow.AllPages));
+        Assert.All(document3.Pages, page => Assert.Contains(page, workflow.AllPages));
+        Assert.All(document4.Pages, page => Assert.Contains(page, workflow.AllPages));
     }
 }
