@@ -105,4 +105,37 @@ public class WorkflowServiceTests
         Assert.All(document3.Pages, page => Assert.Contains(page, workflow.AllPages));
         Assert.All(document4.Pages, page => Assert.Contains(page, workflow.AllPages));
     }
+
+    [Fact]
+    public async Task LoadContextToWorkflowAsync_WhenReloadingContext_ClearsExistingDocuments()
+    {
+        // Arrange
+        Workflow workflow = new();
+        Block block = new(workflow) { Name = "Block", ReplacementTag = "block" };
+        block.SupportedDocumentClasses.Add("MultiPageSearchablePdf");
+        _ = new RagSettings(block) { Type = RagTypes.WholeDocument };
+
+        File initialFile = new ("initial.pdf", []);
+        Document initialDocument = new() { MediaType = MediaType.ApplicationPdf, File = initialFile, Name = "initial.pdf" };
+        initialDocument[1].RawText = "initial page content";
+
+        block.Documents.Add(initialDocument);
+
+        Assert.Single(block.Documents);
+        Assert.Equal("initial.pdf", block.Documents.First().Name);
+
+        // Act
+        File newFile = new("new.pdf", []);
+        Document newDocument = new() { MediaType = MediaType.ApplicationPdf, File = newFile, Name = "new.pdf" };
+        newDocument[1].RawText = "new page content";
+        DocumentInfo newDocumentInfo = new() { Document = newDocument, DocumentClass = "MultiPageSearchablePdf" };
+
+        await _workflowService.LoadContextToWorkflowAsync([newDocumentInfo], workflow);
+
+        // Assert
+        Assert.Single(block.Documents);
+        Assert.Equal("new.pdf", block.Documents.First().Name);
+        Assert.Contains(newDocument.Pages.First(), workflow.AllPages);
+        Assert.DoesNotContain(initialDocument.Pages.First(), workflow.AllPages);
+    }
 }
